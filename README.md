@@ -10,6 +10,14 @@ By default, `cargo-leptos` uses `nightly` Rust, `cargo-generate`, and `sass`. If
 4. `cargo install cargo-generate` - install `cargo-generate` binary (should be installed automatically in future)
 5. `npm install -g sass` - install `dart-sass` (should be optional in future
 
+## Installing node dependencies
+There is a `package.json` and `package-lock.json` specifying the node dependencies in `public`.
+
+In the `public` directory, run:
+``` sh
+npm install
+```
+
 ## Running the dev server
 
 ```bash
@@ -19,7 +27,7 @@ FERRIS_WAITER_CONFIG=config.toml cargo leptos watch
 ## Getting a bcrypt hash for the `password` field in the config
 A simple and easy way to grab a hash is to just slap something like this in `main.rs` and run the dev server.
 ``` rust
-    println!("{}", bcrypt::hash("MY_PASSWORD", 12));
+    println!("{}", bcrypt::hash("MY_PASSWORD", 12).unwrap());
 ```
 
 

@@ -1,8 +1,5 @@
 body {
 	font-family: sans-serif;
-	text-align: center;
-	display: grid;
-	place-items: center;
 
 	form {
 		width: 30%;
@@ -22,4 +19,17 @@ body {
 			justify-content: space-between;
 		}
 	}
+
+	.terminal {
+		overflow: scroll;
+	}
+
+	.terminal-hidden {
+		display: none;
+	}
+}
+
+.status-message {
+	color: red;
+	font-weight: bold;
 }
