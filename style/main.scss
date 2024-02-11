@@ -1,25 +1,5 @@
 body {
-	font-family: sans-serif;
-	text-align: center;
-	display: grid;
-	place-items: center;
-
-	form {
-		width: 30%;
-		.error {
-			color: red;
-			font-weight: bold;
-		}
-
-		.success {
-			color: green;
-			font-weight: bold;
-		}
-
-		.input {
-			display: flex;
-			flex-direction: row;
-			justify-content: space-between;
-		}
-	}
+  height: 100dvh;
+  display: grid;
+  place-items: center;
 }

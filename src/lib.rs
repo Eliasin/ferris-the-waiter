@@ -3,10 +3,15 @@ pub mod error_template;
 #[cfg(feature = "ssr")]
 pub mod fileserv;
 
-use std::collections::HashMap;
+#[derive(Default, serde::Serialize, serde::Deserialize, Debug)]
+pub struct Command {
+    name: String,
+    command: String,
+}
 
 #[derive(Default, serde::Serialize, serde::Deserialize, Debug)]
-pub struct Commands(pub HashMap<String, String>);
+pub struct Commands(Vec<Command>);
+
 pub struct PasswordHashString(pub String);
 
 #[derive(Default, Clone)]
