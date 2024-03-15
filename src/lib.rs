@@ -119,11 +119,27 @@ pub mod status {
     use super::GlobalState;
     use leptos::*;
 
-    pub fn display_status_message(status_message: String) {
+    pub fn display_info_message(status_message: String) {
         let state = expect_context::<RwSignal<GlobalState>>();
 
         state.update(|state| {
             state.status_message = Some((status_message, StatusMessageType::Information))
+        });
+    }
+
+    pub fn display_success_message(status_message: String) {
+        let state = expect_context::<RwSignal<GlobalState>>();
+
+        state.update(|state| {
+            state.status_message = Some((status_message, StatusMessageType::Success))
+        });
+    }
+
+    pub fn display_error_message(status_message: String) {
+        let state = expect_context::<RwSignal<GlobalState>>();
+
+        state.update(|state| {
+            state.status_message = Some((status_message, StatusMessageType::Error))
         });
     }
 
@@ -140,19 +156,21 @@ pub mod status {
         let status_message = create_memo(move |_| state.get().status_message);
 
         view! {
-            move || {
-                match status_message() {
-                    Some((status_message, message_type)) => {
-                       let class = message_type.to_class().to_owned();
-                       view! {
-                           <div class=class>{status_message}</div>
-                       }
-                    },
-                    None => {
-                       view! {
-                           <div class="status-message"></div>
-                       }
+            {
+                move || {
+                    match status_message() {
+                        Some((status_message, message_type)) => {
+                        let class = message_type.to_class().to_owned();
+                        view! {
+                            <div class=class>{status_message}</div>
+                        }
+                        },
+                        None => {
+                        view! {
+                            <div class="status-message"></div>
+                        }
 
+                        }
                     }
                 }
             }

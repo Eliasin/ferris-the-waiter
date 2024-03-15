@@ -1,6 +1,7 @@
 use std::sync::Arc;
 
 use crate::api::*;
+use crate::status::{display_error_message, display_success_message, StatusDisplay};
 use crate::{terminal::TerminalFrontend, ClientMessage, CommandId, GlobalState, ServerMessage};
 use leptos::ev::SubmitEvent;
 use leptos::html::{Input, Select};
@@ -168,10 +169,11 @@ pub fn Login() -> impl IntoView {
         if let Some(response) = response() {
             match response {
                 Ok(session_token) => {
+                    display_success_message(format!("Logged in!"));
                     set_session_token(Some(session_token));
                 }
                 Err(e) => {
-                    web_sys::console::log_1(&format!("Error logging in: {e}").into());
+                    display_error_message(format!("Error logging in: {e}"));
                 }
             }
         }
@@ -225,29 +227,17 @@ pub fn LoggedIn(session_token: String) -> impl IntoView {
         },
     );
 
-    let status_element = move || match submit_action.value()() {
-        Some(Err(error)) => {
-            let error = match error {
-                ServerFnError::ServerError(error) => error,
-                _ => format!("{error}"),
-            };
-
-            (view! {
-                <div class="error">{error.to_string()}</div>
-            })
-            .into_view()
-        }
+    create_effect(move |_| match submit_action.value().get() {
         Some(Ok(command_id)) => {
             state.update(|state| {
                 state.command_outputs.insert(command_id, (0, vec![]));
             });
-            (view! {
-                <div class="success">Success!</div>
-            })
-            .into_view()
+
+            display_success_message("Success!".to_string())
         }
-        _ => (view! {}).into_view(),
-    };
+        Some(Err(e)) => display_error_message(e.to_string()),
+        _ => {}
+    });
 
     let command_options = move || {
         let commands = move || {
@@ -266,7 +256,6 @@ pub fn LoggedIn(session_token: String) -> impl IntoView {
     };
 
     view! {
-        {move || status_element()}
         <CommandOutputWindow session_token=session_token.to_string() />
         <form on:submit=on_submit>
             <Suspense fallback=move || view! { <select>LOADING</select> }>
@@ -291,6 +280,13 @@ pub fn App() -> impl IntoView {
     let state = expect_context::<RwSignal<GlobalState>>();
     let session_token = create_memo(move |_| state.get().session_token);
 
+    let main_content = move || match session_token.get() {
+        Some(session_token) => {
+            view! { <LoggedIn session_token=session_token /> }
+        }
+        None => view! { <Login /> },
+    };
+
     view! {
         // injects a stylesheet into the document <head>
         // id=leptos means cargo-leptos will hot-reload this stylesheet
@@ -301,16 +297,7 @@ pub fn App() -> impl IntoView {
         <svg width="120" height="120">
             <image xlink:href="https://rustacean.net/assets/cuddlyferris.svg" src="https://rustacean.net/assets/cuddlyferris.svg" width="120" height="120"/>
         </svg>
-        {
-        move || {
-            match session_token.get() {
-               Some(session_token) => {
-                   view! { <LoggedIn session_token=session_token /> }
-               },
-               None => view! { <Login /> },
-            }
-        }
-
-        }
+        <StatusDisplay />
+        {move || main_content()}
     }
 }

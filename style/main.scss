@@ -30,6 +30,21 @@ body {
 }
 
 .status-message {
+	color: black;
+	font-weight: bold;
+}
+
+.status-message-success {
+	color: green;
+	font-weight: bold;
+}
+
+.status-message-information {
+	color: black;
+	font-weight: bold;
+}
+
+.status-message-error {
 	color: red;
 	font-weight: bold;
 }
